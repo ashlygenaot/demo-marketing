@@ -11,7 +11,7 @@ export function Navbar() {
   ]
  
   return (
-    <nav className="bg-background-card border-0 px-6 py-3 flex items-center justify-between">
+    <nav className="nav bg-background-card border-0 px-6 py-3 flex items-center justify-between">
       {/* Logo */}
       <div className="flex items-center gap-2">
         <div className="w-2 h-2 rounded-sm bg-accent" />

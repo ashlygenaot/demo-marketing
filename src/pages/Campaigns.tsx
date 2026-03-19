@@ -1,273 +1,3 @@
-// src/pages/Campaigns.tsx
-/*import { useState, useEffect } from "react"
-import type { Campaign, CampaignStatus } from "@/types"
-import { sampleCampaigns } from "@/data/sampleCampaigns"
-
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-
-import { Badge } from "@/components/ui/badge"
-
-export default function Campaigns() {
-  // Load from localStorage if exists, else use sampleCampaigns
-  const [campaigns, setCampaigns] = useState<Campaign[]>(() => {
-    const stored = localStorage.getItem("campaigns")
-    if (stored) return JSON.parse(stored)
-    return sampleCampaigns
-  })
-
-  const [editing, setEditing] = useState<Campaign | null>(null)
-  const [open, setOpen] = useState(false)
-
-  const [form, setForm] = useState({
-    name: "",
-    platform: "",
-    startDate: "", // string from date input
-    spend: 0,
-    status: "active" as CampaignStatus,
-  })
-
-  // Save campaigns to localStorage whenever campaigns state changes
-  useEffect(() => {
-    localStorage.setItem("campaigns", JSON.stringify(campaigns))
-  }, [campaigns])
-
-  const resetForm = () => {
-    setForm({ name: "", platform: "", startDate: "", spend: 0, status: "active" })
-    setEditing(null)
-  }
-
-  const handleSubmit = () => {
-    if (!form.name || !form.platform || !form.startDate || form.spend <= 0) {
-      alert("Please fill all fields correctly.")
-      return
-    }
-
-    const startDateNumber = new Date(form.startDate).getTime()
-
-    if (editing) {
-      setCampaigns(prev =>
-        prev.map(c =>
-          c.id === editing.id
-            ? { ...c, name: form.name, platform: form.platform, startDate: startDateNumber, spend: form.spend, status: form.status }
-            : c
-        )
-      )
-    } else {
-      const newCampaign: Campaign = {
-        id: Date.now().toString(),
-        name: form.name,
-        platform: form.platform,
-        status: form.status,
-        startDate: startDateNumber,
-        spend: form.spend,
-        conversions: 0,
-        impressions: 0,
-        clicks: 0,
-        dailyClicks: [],
-      }
-      setCampaigns(prev => [...prev, newCampaign])
-    }
-
-    setOpen(false)
-    resetForm()
-  }
-
-  const handleEdit = (campaign: Campaign) => {
-    setEditing(campaign)
-    setForm({
-      name: campaign.name,
-      platform: campaign.platform,
-      startDate: new Date(campaign.startDate).toISOString().split("T")[0], // calendar input expects YYYY-MM-DD
-      spend: campaign.spend,
-      status: campaign.status,
-    })
-    setOpen(true)
-  }
-
-  const handleDelete = (id: string) => {
-    setCampaigns(prev => prev.filter(c => c.id !== id))
-  }
-
-  return (
-    <div className="space-y-6 p-6">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Campaign Manager</CardTitle>
-
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={resetForm}>Add Campaign</Button>
-            </DialogTrigger>
-
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>{editing ? "Edit Campaign" : "New Campaign"}</DialogTitle>
-              </DialogHeader>
-
-              <div className="space-y-4">
-                <div>
-                  <Label>Name</Label>
-                  <Input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
-                </div>
-
-                <div>
-                  <Label>Platform</Label>
-                  <Input value={form.platform} onChange={e => setForm({ ...form, platform: e.target.value })} />
-                </div>
-
-                <div>
-                  <Label>Start Date</Label>
-                  <Input
-                    type="date"
-                    value={form.startDate}
-                    onChange={e => setForm({ ...form, startDate: e.target.value })}
-                  />
-                </div>
-
-                <div>
-                  <Label>Budget</Label>
-                  <Input
-                    type="number"
-                    value={form.spend}
-                    onChange={e => setForm({ ...form, spend: Number(e.target.value) })}
-                  />
-                </div>
-
-                <div>
-                  <Label>Status</Label>
-                  <Select
-                    value={form.status}
-                    onValueChange={value => setForm({ ...form, status: value as CampaignStatus })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="paused">Paused</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <Button className="w-full" onClick={handleSubmit}>
-                  {editing ? "Update Campaign" : "Create Campaign"}
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </CardHeader>
-
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Platform</TableHead>
-                <TableHead>Start Date</TableHead>
-                <TableHead>Budget</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-
-            <TableBody>
-              {campaigns.map(c => (
-                <TableRow key={c.id}>
-                  <TableCell>{c.name}</TableCell>
-                  <TableCell>{c.platform}</TableCell>
-                  <TableCell>{new Date(c.startDate).toLocaleDateString()}</TableCell>
-                  <TableCell>${c.spend}</TableCell>
-                  <TableCell>
-                    <Badge variant={c.status === "active" ? "default" : "secondary"}>{c.status}</Badge>
-                  </TableCell>
-                  <TableCell className="text-right space-x-2">
-  <Button variant="outline" size="sm" onClick={() => handleEdit(c)}>
-    Edit
-  </Button>
-
-  <AlertDialog>
-   <AlertDialogTrigger asChild>
-                        <Button variant="destructive" size="sm">
-                          Delete
-                        </Button>
-                      </AlertDialogTrigger>
-
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Delete this campaign?</AlertDialogTitle>
-                        </AlertDialogHeader>
-
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleDelete(c.id)}>
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </TableCell>
-                </TableRow>
-              ))}
-
-              {campaigns.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center">
-                    No campaigns yet.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-    </div>
-  )
-}*/
-
 import { useState, useEffect } from "react"
 import type { Campaign, CampaignStatus } from "@/types"
 import { sampleCampaigns } from "@/data/sampleCampaigns"
@@ -465,14 +195,14 @@ export default function Campaigns() {
     <div className="space-y-6 p-6">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle>Campaign Manager</CardTitle>
+          <CardTitle className="text-xl">Campaign Manager</CardTitle>
  
           <Dialog open={open} onOpenChange={(next) => { setOpen(next); if (!next) resetForm() }}>
             <DialogTrigger asChild>
-              <Button onClick={resetForm}>Add Campaign</Button>
+              <Button className="table-btn" onClick={resetForm}>Add Campaign</Button>
             </DialogTrigger>
  
-            <DialogContent>
+            <DialogContent className="dialog-content">
               <DialogHeader>
                 <DialogTitle>{editing ? "Edit Campaign" : "New Campaign"}</DialogTitle>
               </DialogHeader>
@@ -556,16 +286,16 @@ export default function Campaigns() {
         </CardHeader>
  
         <CardContent>
-          <Table>
+          <Table className="table">
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Platform</TableHead>
-                <TableHead>Start Date</TableHead>
-                <TableHead>Spend</TableHead>
-                <TableHead>Conversions</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="text text-md font-medium uppercase tracking-widest">Name</TableHead>
+                <TableHead className="text text-md font-medium uppercase tracking-widest">Platform</TableHead>
+                <TableHead className="text text-md font-medium uppercase tracking-widest">Start Date</TableHead>
+                <TableHead className="text text-md font-medium uppercase tracking-widest">Spend</TableHead>
+                <TableHead className="text text-md font-medium uppercase tracking-widest">Conversions</TableHead>
+                <TableHead className="text text-md font-medium uppercase tracking-widest">Status</TableHead>
+                <TableHead className="text text-md font-medium uppercase tracking-widest text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
  
@@ -590,22 +320,22 @@ export default function Campaigns() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right space-x-2">
-                    <Button variant="outline" size="sm" onClick={() => handleEdit(c)}>
+                    <Button variant="ghost" size="sm" className='table-btn'onClick={() => handleEdit(c)}>
                       Edit
                     </Button>
  
                     <AlertDialog>
                   
                       <AlertDialogTrigger asChild>
-                      <Button variant="destructive" size="sm">Delete</Button>
+                      <Button variant="ghost" size="sm" className="delete-btn">Delete</Button>
                       </AlertDialogTrigger>
-                      <AlertDialogContent>
+                      <AlertDialogContent className="alert-dialog-content">
                         <AlertDialogHeader>
                           <AlertDialogTitle>Delete "{c.name}"?</AlertDialogTitle>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleDelete(c.id)}>
+                          <AlertDialogCancel className="table-btn">Cancel</AlertDialogCancel>
+                          <AlertDialogAction className="delete-btn" onClick={() => handleDelete(c.id)}>
                             Delete
                           </AlertDialogAction>
                         </AlertDialogFooter>

@@ -104,15 +104,15 @@ html, body {
 }
 
 .nav-item {
-  color: #a78bfa;
+  color: #8b5cf6;
 }
 .nav-item:hover {
   background: rgba(139,92,246,0.08);
-  color: #ede9fe;
+  color: #c6a6f7;
 }
 .nav-item-active {
   background: rgba(139,92,246,0.12);
-  color: #8b5cf6;
+  color: #8050cc;
 }
 
 .metric-card {
@@ -124,3 +124,133 @@ html, body {
   border-color: rgba(124,58,237,0.25) !important;
   box-shadow: 0 2px 16px rgba(124,58,237,0.06);
 }
+
+.nav {
+  background: #f0ebfc;
+  border-bottom: 0.5px solid rgba(139,92,246,0.12);
+}
+
+.dark .nav {
+  background: rgb(13, 10, 20);
+  border-bottom: 0.5px solid rgba(139,92,246,0.15);
+}
+
+.table-btn {
+  background: rgba(124,58,237,0.04);
+  color: #8050cc;
+  border: 0.5px solid rgba(124,58,237,0.12) !important;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.delete-btn {
+  background: rgba(250, 137, 137,0.30);
+  color: black;
+  border: 0.5px solid rgba(252, 121, 121, 0.15) !important;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.dark .delete-btn {
+  background: rgba(255, 111, 111, 0.3);
+  color: white;
+  border: 0.5px solid rgba(250, 66, 66, 0.15) !important;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.table {
+  background: rgba(148, 94, 241, 0.04);
+  border: 0.5px solid rgba(124,58,237,0.12) !important;
+}
+
+
+.text {
+  color: #7c3aed;
+}
+
+.campaign-selector {
+  background: #ffffff !important;
+  border: 0.5px solid rgba(124,58,237,0.15) !important;
+  opacity: 1 !important;
+}
+
+.dark .campaign-selector {
+  background: rgb(18, 14, 30) !important;
+  border: 0.5px solid rgba(139,92,246,0.15) !important;
+  opacity: 1 !important;
+}
+
+.campaign-selector [data-highlighted] {
+  background: rgba(139,92,246,0.12);
+  color: #8b5cf6;
+  outline: none;
+}
+
+.campaign-manager {
+  background: rgb(18, 14, 30) !important;
+  border: 0.5px solid rgba(139,92,246,0.15) !important;
+}
+
+.dialog-content {
+  background: #ffffff !important;
+  border: 0.5px solid rgba(124,58,237,0.15) !important;
+  color: #1e1030 !important;
+}
+
+.dialog-content label {
+  color: #7c3aed;
+}
+
+.dialog-content input {
+  background: #faf8ff !important;
+  border: 0.5px solid rgba(124,58,237,0.2) !important;
+  color: #1e1030 !important;
+}
+
+.dialog-content input::placeholder {
+  color: rgba(124,58,237,0.4);
+}
+
+.dark .dialog-content {
+  background: rgb(18, 14, 30) !important;
+  border: 0.5px solid rgba(139,92,246,0.15) !important;
+  color: #ede9fe !important;
+}
+
+.dark .dialog-content label {
+  color: #a78bfa;
+}
+
+.dark .dialog-content input {
+  background: rgb(13, 10, 20) !important;
+  border: 0.5px solid rgba(139,92,246,0.2) !important;
+  color: #ede9fe !important;
+}
+
+.dark .dialog-content input::placeholder {
+  color: rgba(167,139,250,0.5);
+}
+
+.alert-dialog-content {
+  background: #ffffff !important;
+  border: 0.5px solid rgba(124,58,237,0.15) !important;
+  color: #1e1030 !important;
+}
+
+.dark .alert-dialog-content {
+  background: rgb(18, 14, 30) !important;
+  border: 0.5px solid rgba(139,92,246,0.15) !important;
+  color: #ede9fe !important;
+}
+
+.table {
+  width: 100%;
+  font-size: 15px;
+}
+
+.table td, .table th {
+  padding: 12px 15px;
+}
+
+.value {
+  color:black;
+}
+

@@ -40,13 +40,13 @@ export default function CampaignDetails() {
   }))
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="pace-y-6 p-6">
       {/* Campaign Selector */}
       <Select value={selectedCampaignId} onValueChange={setSelectedCampaignId}>
-        <SelectTrigger className="w-64 border-border bg-background-card text-foreground focus:ring-ring">
+        <SelectTrigger className="campaign-selector w-64 border-0 bg-background-card text-foreground focus:ring-ring z-50">
           <SelectValue placeholder="Select Campaign" />
         </SelectTrigger>
-        <SelectContent className="bg-background-card border border-border shadow-lg shadow-accent/10 z-50">
+        <SelectContent className="campaign-selector bg-background-card border-0 shadow-lg shadow-accent/10 z-100">
           {sampleCampaigns.map(c => (
             <SelectItem
               key={c.id}
@@ -75,12 +75,12 @@ export default function CampaignDetails() {
           </Badge>
         </CardHeader>
 
-        <CardContent className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <CardContent className="text-sm font-medium uppercase tracking-widest metric-card grid grid-cols-1 sm:grid-cols-3 gap-4">
           <MetricCard title="Impressions" value={impressions.toLocaleString()} />
           <MetricCard title="Clicks" value={clicks.toLocaleString()} />
           <MetricCard title="Spend" value={`$${spend.toFixed(2)}`} />
           <MetricCard title="CPC" value={`$${cpc}`} />
-          <MetricCard title="Conversion Rate" value={`${conversionRate}%`} />
+          <MetricCard title="Conversion Rate" value={`${conversionRate}%`}/>
           <MetricCard title="Conversions" value={conversions.toLocaleString()} />
         </CardContent>
       </Card>
@@ -88,18 +88,18 @@ export default function CampaignDetails() {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Daily Clicks Chart */}
-        <Card className="border border-accent/10 bg-background-card shadow-none">
+        <Card className="metric-card border-0 bg-background-card shadow-none">
   <CardHeader>
-    <CardTitle className="text-foreground">Daily Clicks Trend</CardTitle>
+    <p style={{ color: "#7c3aed" }} className="text-sm font-medium uppercase tracking-widest">Daily Clicks Trend</p>
   </CardHeader>
   <CardContent>
     <ClicksLineChart data={dailyClicks} />
   </CardContent>
 </Card>
 
-<Card className="border border-accent/10 bg-background-card shadow-none">
+<Card className="metric-card border-0 bg-background-card shadow-none">
   <CardHeader>
-    <CardTitle className="text-foreground">Daily Conversions Trend</CardTitle>
+    <p style={{ color: "#7c3aed" }} className="text-sm font-medium uppercase tracking-widest">Daily Conversions Trend</p>
   </CardHeader>
   <CardContent>
     <ConversionsLineChart data={dailyConversions} />
