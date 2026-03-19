@@ -7,14 +7,14 @@ type Props = {
 
 export function MetricCard({ title, value }: Props) {
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm text-muted-foreground">
-          {title}
-        </CardTitle>
+    <Card className="metric-card border-0 bg-background-card shadow-none">
+        <CardHeader className="pb-2">
+        <p style={{ color: "#7c3aed" }} className="text-sm font-medium uppercase tracking-widest">
+  {title}
+</p>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
+        <div className="text-2xl font-bold text-foreground">{value}</div>
       </CardContent>
     </Card>
   )

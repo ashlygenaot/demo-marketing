@@ -8,11 +8,11 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts"
- 
+
 type Props = {
-  data: { date: string; clicks: number }[]
+  data: { date: string; conversions: number }[]
 }
- 
+
 function useCssVar(variable: string) {
   const [value, setValue] = useState("")
   useEffect(() => {
@@ -24,20 +24,19 @@ function useCssVar(variable: string) {
   }, [variable])
   return value
 }
- 
-export function ClicksLineChart({ data }: Props) {
-  const accent   = useCssVar("--accent")
-  const mutedFg  = useCssVar("--muted-foreground")
-  const border   = useCssVar("--border")
-  const bgCard   = useCssVar("--background-card")
-  const fg       = useCssVar("--foreground")
- 
-  const accentColor  = accent   ? `rgb(${accent})`        : "#8b5cf6"
-  const mutedColor   = mutedFg  ? `rgb(${mutedFg})`       : "#a78bfa"
-  const borderColor  = border   ? `rgb(${border} / 0.15)` : "rgba(139,92,246,0.15)"
-  const cardBg       = bgCard   ? `rgb(${bgCard})`        : "#120e1e"
-  const fgColor      = fg       ? `rgb(${fg})`            : "#ede9fe"
- 
+export function ConversionsLineChart({ data }: Props) {
+  const accent  = useCssVar("--accent")
+  const mutedFg = useCssVar("--muted-foreground")
+  const border  = useCssVar("--border")
+  const bgCard  = useCssVar("--background-card")
+  const fg      = useCssVar("--foreground")
+
+  const accentColor = accent  ? `rgb(${accent})`         : "#8b5cf6"
+  const mutedColor  = mutedFg ? `rgb(${mutedFg})`        : "#a78bfa"
+  const borderColor = border  ? `rgb(${border} / 0.15)`  : "rgba(139,92,246,0.15)"
+  const cardBg      = bgCard  ? `rgb(${bgCard})`         : "#120e1e"
+  const fgColor     = fg      ? `rgb(${fg})`             : "#ede9fe"
+
   return (
     <ResponsiveContainer width="100%" height={250}>
       <LineChart data={data} margin={{ top: 20, right: 20, bottom: 20, left: 0 }}>
@@ -68,14 +67,13 @@ export function ClicksLineChart({ data }: Props) {
         />
         <Line
           type="monotone"
-          dataKey="clicks"
-          stroke={accentColor}
+          dataKey="conversions"
+          stroke={mutedColor}
           strokeWidth={2.5}
-          dot={{ r: 3, fill: accentColor, strokeWidth: 0 }}
-          activeDot={{ r: 5, fill: accentColor, strokeWidth: 0 }}
+          dot={{ r: 3, fill: mutedColor, strokeWidth: 0 }}
+          activeDot={{ r: 5, fill: mutedColor, strokeWidth: 0 }}
         />
       </LineChart>
     </ResponsiveContainer>
   )
 }
- 

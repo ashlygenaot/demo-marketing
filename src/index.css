@@ -1,45 +1,126 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --sidebar: hsl(0 0% 98%);
-  --sidebar-foreground: hsl(240 5.3% 26.1%);
-  --sidebar-primary: hsl(240 5.9% 10%);
-  --sidebar-primary-foreground: hsl(0 0% 98%);
-  --sidebar-accent: hsl(240 4.8% 95.9%);
-  --sidebar-accent-foreground: hsl(240 5.9% 10%);
-  --sidebar-border: hsl(220 13% 91%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  --background:           250 248 255;
+  --background-card:      255 255 255;
+  --background-hover:     245 243 255;
+  --foreground:           30  16  48;
+  --muted:                76  29  149;
+  --muted-foreground:     167 139 250;
+  --accent:               124 58  237;
+  --accent-foreground:    255 255 255;
+  --accent-subtle:        237 233 254;
+  --positive:             5   150 105;
+  --negative:             220 38  38;
+  --border:               109 40  217;
+  --ring:                 124 58  237;
+  --destructive:          220 38  38;
+  --destructive-foreground: 255 255 255;
+  --card:                 255 255 255;
+  --card-foreground:      30  16  48;
 }
 
 .dark {
-  --sidebar: hsl(240 5.9% 10%);
-  --sidebar-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-primary: hsl(224.3 76.3% 48%);
+  --background:           13  10  20;
+  --background-card:      18  14  30;
+  --background-hover:     28  22  48;
+  --foreground:           237 233 254;
+  --muted:                196 181 253;
+  --muted-foreground:     167 139 250;
+  --accent:               139 92  246;
+  --accent-foreground:    255 255 255;
+  --accent-subtle:        139 92  246;
+  --positive:             52  211 153;
+  --negative:             248 113 113;
+  --border:               139 92  246;
+  --ring:                 139 92  246;
+  --destructive:          239 68  68;
+  --destructive-foreground: 255 255 255;
+  --card:                 18  14  30;
+  --card-foreground:      237 233 254;
+  --sidebar:              hsl(258 35% 7%);
+  --sidebar-foreground:   hsl(263 90% 94%);
+  --sidebar-primary:      hsl(263 80% 65%);
   --sidebar-primary-foreground: hsl(0 0% 100%);
-  --sidebar-accent: hsl(240 3.7% 15.9%);
-  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-border: hsl(240 3.7% 15.9%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  --sidebar-accent:       hsl(258 35% 11%);
+  --sidebar-accent-foreground: hsl(263 90% 94%);
+  --sidebar-border:       hsl(263 40% 14%);
+  --sidebar-ring:         hsl(263 80% 65%);
 }
 
-@theme inline {
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+@theme {
+  --color-background:               rgb(var(--background) / <alpha-value>);
+  --color-background-card:          rgb(var(--background-card) / <alpha-value>);
+  --color-background-hover:         rgb(var(--background-hover) / <alpha-value>);
+  --color-foreground:               rgb(var(--foreground) / <alpha-value>);
+  --color-muted:                    rgb(var(--muted) / <alpha-value>);
+  --color-muted-foreground:         rgb(var(--muted-foreground) / <alpha-value>);
+  --color-accent:                   rgb(var(--accent) / <alpha-value>);
+  --color-accent-foreground:        rgb(var(--accent-foreground) / <alpha-value>);
+  --color-accent-subtle:            rgb(var(--accent-subtle) / <alpha-value>);
+  --color-positive:                 rgb(var(--positive) / <alpha-value>);
+  --color-negative:                 rgb(var(--negative) / <alpha-value>);
+  --color-border:                   rgb(var(--border) / <alpha-value>);
+  --color-ring:                     rgb(var(--ring) / <alpha-value>);
+  --color-destructive:              rgb(var(--destructive) / <alpha-value>);
+  --color-destructive-foreground:   rgb(var(--destructive-foreground) / <alpha-value>);
+  --color-card:                     rgb(var(--card) / <alpha-value>);
+  --color-card-foreground:          rgb(var(--card-foreground) / <alpha-value>);
+}
+
+
+html {
+  background-color: rgb(var(--background));
+  color: rgb(var(--foreground));
+}
+
+html, body {
+  min-height: 100%;
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    border-color: rgb(var(--border) / 0.1);
+     outline-color: rgb(var(--ring) / 0.5);
   }
-  body {
-    @apply bg-background text-foreground;
-  }
+}
+
+.badge-active {
+  background: rgba(139,92,246,0.15) !important;
+  color: #8b5cf6 !important;
+  border-color: rgba(139,92,246,0.2) !important;
+}
+
+.btn-ghost-hover:hover {
+  background: rgba(139,92,246,0.1);
+  color: #8b5cf6;
+}
+
+.dropdown-item:hover {
+  background: rgba(139,92,246,0.1);
+  color: #8b5cf6;
+}
+
+.nav-item {
+  color: #a78bfa;
+}
+.nav-item:hover {
+  background: rgba(139,92,246,0.08);
+  color: #ede9fe;
+}
+.nav-item-active {
+  background: rgba(139,92,246,0.12);
+  color: #8b5cf6;
+}
+
+.metric-card {
+  background: rgba(124,58,237,0.04);
+  border: 0.5px solid rgba(124,58,237,0.12) !important;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.metric-card:hover {
+  border-color: rgba(124,58,237,0.25) !important;
+  box-shadow: 0 2px 16px rgba(124,58,237,0.06);
 }
