@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { sampleCampaigns } from "@/data/sampleCampaigns"
+import { useCampaigns } from "@/hooks/useCampaigns"
 import type { Campaign } from "@/types"
 
 import {
@@ -20,13 +20,21 @@ import { ClicksLineChart } from "@/components/charts/ClicksLineChart"
 import { ConversionsLineChart } from "@/components/charts/ConversionsLineChart"
 
 export default function CampaignDetails() {
-  const [selectedCampaignId, setSelectedCampaignId] = useState<string>(sampleCampaigns[0]?.id || "")
-  const [campaign, setCampaign] = useState<Campaign | undefined>(sampleCampaigns[0])
+  const campaigns = useCampaigns()
+
+  const [selectedCampaignId, setSelectedCampaignId] = useState<string>("")
+  const [campaign, setCampaign] = useState<Campaign | undefined>(undefined)
 
   useEffect(() => {
-    const found = sampleCampaigns.find(c => c.id === selectedCampaignId)
+    if (campaigns.length && !selectedCampaignId) {
+      setSelectedCampaignId(campaigns[0].id)
+    }
+  }, [campaigns])
+
+  useEffect(() => {
+    const found = campaigns.find(c => c.id === selectedCampaignId)
     setCampaign(found)
-  }, [selectedCampaignId])
+  }, [selectedCampaignId, campaigns])
 
   if (!campaign) return <div className="p-6">Campaign not found</div>
 
@@ -38,7 +46,6 @@ export default function CampaignDetails() {
     date: dc.date,
     conversions: Math.floor(dc.clicks * 0.1),
   }))
-
   return (
     <div className="pace-y-6 p-6">
       {/* Campaign Selector */}
@@ -47,7 +54,7 @@ export default function CampaignDetails() {
           <SelectValue placeholder="Select Campaign" />
         </SelectTrigger>
         <SelectContent className="campaign-selector bg-background-card border-0 shadow-lg shadow-accent/10 z-100">
-          {sampleCampaigns.map(c => (
+          {campaigns.map(c => (
             <SelectItem
               key={c.id}
               value={c.id}

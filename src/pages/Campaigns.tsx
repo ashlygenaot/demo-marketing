@@ -62,9 +62,33 @@ const emptyForm = {
   startDate: "",
   spend: "" as number | "",
   conversions: "" as number | "",
+  impressions: "" as number | "",
+  clicks: "" as number | "",
   status: "active" as CampaignStatus,
 }
  
+// Add this helper at the top of the file, outside the component
+function generateDailyClicks(totalClicks: number, startDate: number): { date: string; clicks: number }[] {
+  const start = new Date(startDate)
+  const today = new Date()
+  const days: { date: string; clicks: number }[] = []
+
+  // Count days from start to today
+  const msPerDay = 1000 * 60 * 60 * 24
+  const totalDays = Math.max(1, Math.floor((today.getTime() - start.getTime()) / msPerDay) + 1)
+  const baseClicks = Math.floor(totalClicks / totalDays)
+  let remaining = totalClicks
+
+  for (let i = 0; i < totalDays; i++) {
+    const date = new Date(start.getTime() + i * msPerDay)
+    const dateStr = date.toISOString().split("T")[0]
+    const clicks = i === totalDays - 1 ? remaining : baseClicks
+    remaining -= baseClicks
+    days.push({ date: dateStr, clicks })
+  }
+
+  return days
+}
 function parseDateLocal(dateStr: string): number {
   const [y, m, d] = dateStr.split("-").map(Number)
   return new Date(y, m - 1, d).getTime()
@@ -122,6 +146,7 @@ export default function Campaigns() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(campaigns))
       localStorage.setItem(STORAGE_VERSION_KEY, STORAGE_VERSION)
+      window.dispatchEvent(new Event("campaigns-updated"))
     } catch {
       // Fail silently
     }
@@ -139,17 +164,26 @@ export default function Campaigns() {
     if (!form.startDate) return setError("Start date is required.")
     if (form.spend === "" || Number(form.spend) < 0) return setError("Enter a valid spend amount.")
     if (form.conversions === "" || Number(form.conversions) < 0) return setError("Enter a valid conversions count.")
+    if (form.impressions === "" || Number(form.impressions) < 0) return setError("Enter a valid impressions count.")
+    if (form.clicks === "" || Number(form.clicks) < 0) return setError("Enter a valid clicks count.")
  
     setError("")
     const startDate = parseDateLocal(form.startDate)
     const spend = Number(form.spend)
     const conversions = Number(form.conversions)
+    const impressions = Number(form.impressions)
+    const clicks = Number(form.clicks)
  
     if (editing) {
       setCampaigns(prev =>
         prev.map(c =>
           c.id === editing.id
-            ? { ...c, name: form.name, platform: form.platform, startDate, spend, conversions, status: form.status }
+            ? { ...c, name: form.name, platform: form.platform, startDate, spend, conversions, impressions, clicks, status: form.status,
+
+              dailyClicks: clicks !== editing.clicks 
+              ? generateDailyClicks(clicks, startDate)
+              : c.dailyClicks,
+             }
             : c
         )
       )
@@ -164,7 +198,7 @@ export default function Campaigns() {
         conversions,
         impressions: 0,
         clicks: 0,
-        dailyClicks: [],
+        dailyClicks: generateDailyClicks(clicks, startDate),
       }
       setCampaigns(prev => [...prev, newCampaign])
     }
@@ -182,6 +216,8 @@ export default function Campaigns() {
       startDate: new Date(campaign.startDate).toISOString().split("T")[0],
       spend: campaign.spend,
       conversions: campaign.conversions,
+      impressions: campaign.impressions,
+      clicks: campaign.clicks,
       status: campaign.status,
     })
     setOpen(true)
@@ -234,6 +270,28 @@ export default function Campaigns() {
                     onChange={e => setForm({ ...form, startDate: e.target.value })}
                   />
                 </div>
+
+                <div>
+                  <Label>Impressions</Label>
+                  <Input
+                    type="number"
+                    min={0}
+                    value={form.impressions}
+                    onChange={e => setForm({ ...form, impressions: e.target.value === "" ? "" : Number(e.target.value) })}
+                    placeholder="0"
+                  />
+                </div>
+
+                <div>
+                  <Label>Clicks</Label>
+                  <Input
+                    type="number"
+                    min={0}
+                    value={form.clicks}
+                    onChange={e => setForm({ ...form, clicks: e.target.value === "" ? "" : Number(e.target.value) })}
+                    placeholder="0"
+                  />
+                </div>
  
                 <div>
                   <Label>Spend ($)</Label>
@@ -266,7 +324,7 @@ export default function Campaigns() {
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="campaign-selector">
                       <SelectItem value="active">Active</SelectItem>
                       <SelectItem value="paused">Paused</SelectItem>
                     </SelectContent>
@@ -277,7 +335,7 @@ export default function Campaigns() {
                   <p className="text-sm text-destructive">{error}</p>
                 )}
  
-                <Button className="w-full" onClick={handleSubmit}>
+                <Button className="table-btn w-full " onClick={handleSubmit}>
                   {editing ? "Update Campaign" : "Create Campaign"}
                 </Button>
               </div>
@@ -292,6 +350,8 @@ export default function Campaigns() {
                 <TableHead className="text text-md font-medium uppercase tracking-widest">Name</TableHead>
                 <TableHead className="text text-md font-medium uppercase tracking-widest">Platform</TableHead>
                 <TableHead className="text text-md font-medium uppercase tracking-widest">Start Date</TableHead>
+                <TableHead className="text text-md font-medium uppercase tracking-widest">Impressions</TableHead>
+                <TableHead className="text text-md font-medium uppercase tracking-widest">Clicks</TableHead>
                 <TableHead className="text text-md font-medium uppercase tracking-widest">Spend</TableHead>
                 <TableHead className="text text-md font-medium uppercase tracking-widest">Conversions</TableHead>
                 <TableHead className="text text-md font-medium uppercase tracking-widest">Status</TableHead>
@@ -312,6 +372,8 @@ export default function Campaigns() {
                       timeZone: "UTC",
                     })}
                   </TableCell>
+                  <TableCell>{c.impressions.toLocaleString()}</TableCell>
+                  <TableCell>{c.clicks.toLocaleString()}</TableCell>
                   <TableCell>${c.spend.toLocaleString()}</TableCell>
                   <TableCell>{c.conversions.toLocaleString()}</TableCell>
                   <TableCell>
@@ -347,7 +409,7 @@ export default function Campaigns() {
  
               {campaigns.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                  <TableCell colSpan={9} className="text-center text-muted-foreground py-8">
                     No campaigns yet. Click "Add Campaign" to get started.
                   </TableCell>
                 </TableRow>
