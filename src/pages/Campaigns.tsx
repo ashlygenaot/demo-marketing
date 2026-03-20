@@ -67,7 +67,6 @@ const emptyForm = {
   status: "active" as CampaignStatus,
 }
  
-// Add this helper at the top of the file, outside the component
 function generateDailyClicks(totalClicks: number, startDate: number): { date: string; clicks: number }[] {
   const start = new Date(startDate)
   const today = new Date()
